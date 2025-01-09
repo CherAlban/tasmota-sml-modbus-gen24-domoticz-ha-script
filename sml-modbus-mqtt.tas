@@ -163,10 +163,10 @@ if xcnt>=12 {
  ;       next
     } else {
         ecnt=ecnt+1
-		print clear TCP buffer %xcnt% ecnt %ecnt%
+	print clear TCP buffer %xcnt% ecnt %ecnt%
         wsf()
     }
-;	print time %(millis-ctime)%
+;    print time %(millis-ctime)%
 }
 
 >F
@@ -180,8 +180,8 @@ ret=sml[3]*1000
 cons=sml[1]
 prod=0
 if cons<0 {
-prod=abs(cons)
-cons=0
+	prod=abs(cons)
+	cons=0
 }
 
 Ap=MOD#A_power
@@ -204,37 +204,37 @@ He=MOD#H_energy*1000
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
 if (usage>1000 and ret>1000) {
-smlj|=1
+	smlj|=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
   if (usage>1000 and ret>1000) {
-  =>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
+  	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
   if Ae>1000 {
-  =>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
+  	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
   if Be>1000 {
-  =>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
+  	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
   if Ce>1000 {
-  =>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
+  	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
   if De>1000 {
-  =>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
+  	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
   if Ee>1000 {
-  =>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
+  	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
   if Fe>1000 {
-  =>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
+  	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
   if Ge>1000 {
-  =>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
+  	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
   if He>1000 {
-  =>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
+  	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
 
