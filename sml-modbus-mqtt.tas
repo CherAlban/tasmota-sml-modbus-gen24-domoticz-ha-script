@@ -129,8 +129,8 @@ ends
 xcnt =wsa()
 ;print %xcnt%
 if xcnt>=12 {    
-    ; check if sml values are valid, else discard request
-    if (vsml2>1000 and vsml3>1000 and xcnt<=120) {
+    ; check if sml reading are valid (>100kWh), else discard request
+    if (vsml2>100000 and vsml3>100000 and xcnt<=120) {
 ;        for cnt 1 xcnt 12
             res=wsra(req)
 
