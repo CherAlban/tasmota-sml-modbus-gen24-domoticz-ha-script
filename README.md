@@ -1,0 +1,1 @@
+# tasmota-sml-modbus-gen24-domoticz-ha-script
