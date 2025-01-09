@@ -18,6 +18,7 @@ Alle Credits gehen an gemu2015, er hat Tasmota entsprechend erweitert und mir se
 
 Zusätzlich fragt das Script per seriellem Modbus acht 1-Phasen Wechselstromzähler ab (2x EASTRON SDM120 und 6x Saia ALD1D5F), und stellt swohl die SML-Messwerte als auch die 1-Phasenzähler-Messwerte über MQTT für DOMOTICZ und Home Assistent zur Verfügung.
 
+Die serielle Abfrage der Saia ALD1D5F ist hier beschrieben:
 https://www.photovoltaikforum.com/thread/199292-sonoff-shelly-bessere-alternativen-f%C3%BCr-tasmota/?postID=3594224#post3594224
 
 
