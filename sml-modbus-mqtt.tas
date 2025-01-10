@@ -1,4 +1,13 @@
 >D
+;config for VS Code extension "Tasmota Script Language Support"
+;IP=192.168.0.178
+;stripcomments
+;scriptsize=18000
+
+; Skript Version:
+Version="0.0.2"
+; Beschreibung:
+
 ; variables SML
 pcurr=0
 
@@ -80,6 +89,7 @@ switch reg
         data={1 65}
 
     case 40003
+        ;https://cryptii.com/pipes/integer-encoder
         ; uint16: ID = 1
         data={3100}
         ; uint16: L = 65
@@ -90,8 +100,8 @@ switch reg
 		data={83 109 97 114 116    32 77 101 116 101    114 32 54 51 65    0}
 		; string08: Smart Meter Name = "SM1" 
 		data={83 77 49 0 0    0 0 0}
-		;  string08: SW version   = "001"
-		data={48 48 49 0 0    0 0 0}
+		;  string08: SW version   = "00002"
+		data={48 48 48 48 50    0 0 0}
 		; string16: Smart Meter Serialnumber = "12345" 
 		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
 		; uint16: Modbus Device Address = 1  
@@ -171,10 +181,10 @@ if xcnt>=12 {
  ;       next
     } else {
         ecnt=ecnt+1
-	print clear TCP buffer %xcnt% ecnt %ecnt%
+	    print clear TCP buffer: %xcnt% ecnt: %ecnt%
         wsf()
     }
-;    print time %(millis-ctime)%
+;    print time: %(millis-ctime)%
 }
 
 >F
@@ -261,11 +271,14 @@ if pcurr<=0 {
 res=wsc()
 
 >M 2
+; define main meter
 +1,16,s,0,9600,SML
 1,77070100100700ff@1,Leistung,W,Power_curr,0
 1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
 1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
 1,=h ----------------------------
+
+; define additional sub-meters
 +2,3,M,0,9600,MOD,1,2,01030025,0103001E,02030025,0203001E,03030025,0303001E,04030025,0403001E,05030025,0503001E,06030025,0603001E,0704000C,07040048,0804000C,08040048
 2,010304UUuu@i0:0.1,A Power,W,A_power,0
 2,010304UUuu@i1:100,A Energy,kWh,A_energy,2
