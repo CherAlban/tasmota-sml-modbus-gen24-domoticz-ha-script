@@ -1,15 +1,20 @@
 >D
 ;config for VS Code extension "Tasmota Script Language Support"
-;IP=192.168.0.178
+;IP=192.168.0.250
 ;stripcomments
 ;scriptsize=18000
 
 ; Skript Version:
-Version="0.0.2"
+Version="0.0.3"
+
+; for testing without Smart Meter set minE to 0
+minE=0
+; for production set minE to 1000
+;minE=1000
 ; Beschreibung:
 
 ; variables SML
-pcurr=0
+;pcurr=0
 
 ; variables Modbus TCP
 res=0
@@ -65,8 +70,8 @@ spinm(2 1)
 
 ; start TCP server
 res=wso(502)
-print res=%res%
-; create task 1 every 100ms on core1, priority 3, stack 8kb
+print start TCP server - return code: %res%
+; create task 1 every 10ms on core1, priority 3, stack 8kb
 ct(1 10 1 3 8000)
 
 ; set Modbus register values
@@ -75,6 +80,7 @@ data[0]=0
 ; default = word
 dform=1
 switch reg
+    ; use https://cryptii.com/pipes/integer-encoder for data conversion
 
     case 768
         data={0}
@@ -83,25 +89,25 @@ switch reg
         data={0}
 
     case 40000
+         ; Sun specs: Start 40001
+        ;  uint32: SID = 0x53756e53 ('SunS')
         data={21365 28243}
 
     case 40002
-        data={1 65}
-
-    case 40003
-        ;https://cryptii.com/pipes/integer-encoder
+        ; Sun specs: Start 40003
         ; uint16: ID = 1
-        data={3100}
+        data={1}
         ; uint16: L = 65
-        data={3635}
+        data={65}
     	; string16: Manufacturer = "Fronius" 
 		data={70 114 111 110 105    117 115 0 0 0    0 0 0 0 0    0}
 		; string16: Model = "Smart Meter 63A"
 		data={83 109 97 114 116    32 77 101 116 101    114 32 54 51 65    0}
 		; string08: Smart Meter Name = "SM1" 
 		data={83 77 49 0 0    0 0 0}
-		;  string08: SW version   = "00002"
+		;  string08: SW version   = "00003"
         ; . = 46
+		;data={48 48 48 48 51    0 0 0}
 		data={48 48 48 48 50    0 0 0}
 		; string16: Smart Meter Serialnumber = "12345" 
 		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
@@ -149,7 +155,7 @@ xcnt =wsa()
 ;print %xcnt%
 if xcnt>=12 {    
     ; check if sml values are valid, else discard request
-    if (vsml2>1000 and vsml3>1000 and xcnt<=120) {
+    if (vsml2>=minE and vsml3>=minE and xcnt<=120) {
 ;        for cnt 1 xcnt 12
             res=wsra(req)
 
@@ -177,13 +183,15 @@ if xcnt>=12 {
             wswa(resp 9)
 
             ; write response data
+            print ModBus: write response data reg: %reg%
             =#dosel
             wswa(data nval dform)
  ;       next
     } else {
-        ecnt=ecnt+1
-	    print clear TCP buffer: %xcnt% ecnt: %ecnt%
-        wsf()
+		; discard request
+		ecnt=ecnt+1
+		print discard request, no valid Modbus SML data, clear TCP buffer %xcnt% error cnt: %ecnt%
+		wsf()
     }
 ;    print time: %(millis-ctime)%
 }
@@ -222,86 +230,88 @@ He=MOD#H_energy*1000
 
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
-if (usage>1000 and ret>1000) {
-	smlj|=1
+if (usage>minE and ret>minE) {
+	print MQTT publishing enabled
+    smlj|=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
-  if (usage>1000 and ret>1000) {
+  if (usage>minE and ret>minE) {
   	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
-  if Ae>1000 {
+  if Ae>minE {
   	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
-  if Be>1000 {
+  if Be>minE {
   	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
-  if Ce>1000 {
+  if Ce>minE {
   	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
-  if De>1000 {
+  if De>minE {
   	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
-  if Ee>1000 {
+  if Ee>minE {
   	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
-  if Fe>1000 {
+  if Fe>minE {
   	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
-  if Ge>1000 {
+  if Ge>minE {
   	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
-  if He>1000 {
+  if He>minE {
   	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
 
-; onbaord LED on if Power_curr < 0
-pcurr=sml[1]
-if pcurr>0 {
+; SWITCH onboard LED on if Power_curr < 0
+;pcurr=sml[1]
+;if pcurr>0 {
+if sml[1]>0 {
     spin(2 0)
-}
-if pcurr<=0 {
+} else {
     spin(2 1)
 }
-
 
 >R
 ; close server
 res=wsc()
 
 >M 2
+NO_USE_SML_CANBUS
 ; define main meter
 +1,16,s,0,9600,SML
+1,=h Version: %Version%
+1,=h<hr/>
 1,77070100100700ff@1,Leistung,W,Power_curr,0
 1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
 1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
-1,=h ----------------------------
-
+1,=h<hr/>
 ; define additional sub-meters
 +2,3,M,0,9600,MOD,1,2,01030025,0103001E,02030025,0203001E,03030025,0303001E,04030025,0403001E,05030025,0503001E,06030025,0603001E,0704000C,07040048,0804000C,08040048
 2,010304UUuu@i0:0.1,A Power,W,A_power,0
 2,010304UUuu@i1:100,A Energy,kWh,A_energy,2
-2,=h ----------------------------
+2,=h<hr/>
 2,020304UUuu@i2:0.1,B Power,W,B_power,0
 2,020304UUuu@i3:100,B Energy,kWh,B_energy,2
-2,=h ----------------------------
+2,=h<hr/>
 2,030304UUuu@i4:0.1,C Power,W,C_power,0
 2,030304UUuu@i5:100,C Energy,kWh,C_energy,2
-2,=h ----------------------------
+1,=h<hr/>
 2,040304UUuu@i6:0.1,D Power,W,D_power,0
 2,040304UUuu@i7:100,D Energy,kWh,D_energy,2
-2,=h ----------------------------
+2,=h<hr/>
 2,050304UUuu@i8:0.1,E Power,W,E_power,0
 2,050304UUuu@i9:100,E Energy,kWh,E_energy,2
-2,=h ----------------------------
+2,=h<hr/>
 2,060304UUuu@i10:0.1,F Power,W,F_power,0
 2,060304UUuu@i11:100,F Energy,kWh,F_energy,2
-2,=h ----------------------------
+2,=h<hr/>
 2,070404ffffffff@i12:1,G Power,W,G_power,1
 2,070404ffffffff@i13:1,G Energy,kWh,G_energy,3
-2,=h ----------------------------
+2,=h<hr/>
 2,080404ffffffff@i14:1,H Power,W,H_power,1
 2,080404ffffffff@i15:1,H Energy,kWh,H_energy,3
 #
