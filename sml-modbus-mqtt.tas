@@ -79,18 +79,26 @@ switch reg
     case 40002
         data={1 65}
 
-    case 40004
-        data={70 114 111 110 105 117 115 0 0 0 0 0 0 0 0 0}
-        data={83 109 97 114 116 32 77 101 116 101 114 32 54 51 65 0}
-        data={0 0 0 0 0 0 0 0}
-        data={0 0 0 0 0 0 0 0}
-        data={48 48 48 48 48 48 48 49 0 0 0 0 0 0 0 0}
-        data={240 213}
+    case 40003
+        ; uint16: ID = 1
+        data={3100}
+        ; uint16: L = 65
+        data={3635}
+    	; string16: Manufacturer = "Fronius" 
+		data={70 114 111 110 105    117 115 0 0 0    0 0 0 0 0    0}
+		; string16: Model = "Smart Meter 63A"
+		data={83 109 97 114 116    32 77 101 116 101    114 32 54 51 65    0}
+		; string08: Smart Meter Name = "SM1" 
+		data={83 77 49 0 0    0 0 0}
+		;  string08: SW version   = "001"
+		data={48 48 49 0 0    0 0 0}
+		; string16: Smart Meter Serialnumber = "12345" 
+		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
+		; uint16: Modbus Device Address = 1  
+		data={3100}
+		nval=67
 
-    case 40069
-        data={213 124}
-
-    case 40071
+    case 40070
         data={0 0 0 0 0}
         data={0 0 0 0 0}
         data={0 0 0 vsml1 0}
