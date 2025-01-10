@@ -101,6 +101,7 @@ switch reg
 		; string08: Smart Meter Name = "SM1" 
 		data={83 77 49 0 0    0 0 0}
 		;  string08: SW version   = "00002"
+        ; . = 46
 		data={48 48 48 48 50    0 0 0}
 		; string16: Smart Meter Serialnumber = "12345" 
 		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
