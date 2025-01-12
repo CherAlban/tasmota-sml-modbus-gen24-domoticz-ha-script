@@ -258,24 +258,24 @@ res=wsc()
 1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
 1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
 1,=h ----------------------------
-+2,3,M,0,9600,MOD,1,2,01030025,0103001E,02030025,0203001E,03030025,0303001E,04030025,0403001E,05030025,0503001E,06030025,0603001E,0704000C,07040048,0804000C,08040048
++2,3,M,0,9600,MOD,1,2,01030025,0103001D,02030025,0203001D,03030025,0303001D,04030025,0403001D,05030025,0503001D,06030025,0603001D,0704000C,07040048,0804000C,08040048
 2,010304UUuu@i0:0.1,A Power,W,A_power,0
-2,010304UUuu@i1:100,A Energy,kWh,A_energy,2
+2,010304UUuuUUuu@i1:100,A Energy,kWh,A_energy,2
 2,=h ----------------------------
 2,020304UUuu@i2:0.1,B Power,W,B_power,0
-2,020304UUuu@i3:100,B Energy,kWh,B_energy,2
+2,020304UUuuUUuu@i3:100,B Energy,kWh,B_energy,2
 2,=h ----------------------------
 2,030304UUuu@i4:0.1,C Power,W,C_power,0
-2,030304UUuu@i5:100,C Energy,kWh,C_energy,2
+2,030304UUuuUUuu@i5:100,C Energy,kWh,C_energy,2
 2,=h ----------------------------
 2,040304UUuu@i6:0.1,D Power,W,D_power,0
-2,040304UUuu@i7:100,D Energy,kWh,D_energy,2
+2,040304UUuuUUuu@i7:100,D Energy,kWh,D_energy,2
 2,=h ----------------------------
 2,050304UUuu@i8:0.1,E Power,W,E_power,0
-2,050304UUuu@i9:100,E Energy,kWh,E_energy,2
+2,050304UUuuUUuu@i9:100,E Energy,kWh,E_energy,2
 2,=h ----------------------------
 2,060304UUuu@i10:0.1,F Power,W,F_power,0
-2,060304UUuu@i11:100,F Energy,kWh,F_energy,2
+2,060304UUuuUUuu@i11:100,F Energy,kWh,F_energy,2
 2,=h ----------------------------
 2,070404ffffffff@i12:1,G Power,W,G_power,1
 2,070404ffffffff@i13:1,G Energy,kWh,G_energy,3
