@@ -5,7 +5,7 @@
 ;scriptsize=18000
 
 ; Skript Version:
-Version="0.1.4"
+Version="0.2.0"
 
 ; for testing without Smart Meter set minE to 0
 minE=0
@@ -58,10 +58,13 @@ ret=0
 cons=0
 prod=0
 
+; -- BOOT --
 >B
+=>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
 ;disable publishing at MQTT teleperiod, on boot
+;Deaktiviere MQTT beim Start, verhindert das falsche Werte gesendet werden
 smlj=0
 
 >BS
@@ -71,8 +74,13 @@ spinm(2 1)
 ; start TCP server
 res=wso(502)
 print start TCP server - return code: %res%
-; create task 1 every 10ms on core1, priority 3, stack 8kb
-ct(1 10 1 3 8000)
+if minE>0 {
+    print Running in production mode!!
+} else {
+    print Running in TEST mode, no active Smart Meter required and 0 values allowed!!
+}        
+; create task 1 every 50ms on core1, priority 3, stack 8kb
+ct(1 50 1 3 8000)
 
 #dosel
 ; set Modbus register values
@@ -88,18 +96,19 @@ switch reg
     case 1706
         data={0}
 
-    case 40001
+    case 40000
          ; Sun specs: Start 40001
         ;  uint32: SID = 0x53756e53 ('SunS')
         data={21365 28243}
 
-;    case 40002
-    case 40003
+    case 40002
         ; Sun specs: Start 40003
         ; uint16: ID = 1
         data={1}
         ; uint16: L = 65
         data={65}
+
+    case 40004
         ; Sun specs: Start 40005
     	; string16: Manufacturer = "Fronius" 
 		data={70 114 111 110 105    117 115 0 0 0    0 0 0 0 0    0}
@@ -109,21 +118,23 @@ switch reg
         ; Sun specs: Start 40037
 		; string08: Smart Meter Name = "SM1" 
 		data={83 77 49 0 0    0 0 0}
+
+    case 40044
         ; Sun specs: Start 40045
-		;  string08: SW version   = "0.1.4"
+		; string08: SW version   = "0.2.0"
         ; . = 46
-		data={48 46 49 52 46   0 0 0}
+		data={48 46 50 46 48    0 0 0}
         ; Sun specs: Start 40053
 		; string16: Smart Meter Serial number = "12345" 
 		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
+        data={240 213}
+
+    case 40069
         ; Sun specs: Start 40069
-		; uint16: Modbus Device Address = 1  
-		data={1}
-		nval=67
-        dform=0
-
-
-    case 40070
+		; uint16: Modbus Device Address = 213  
+        data={213 124}
+        
+    case 40071
         data={0 0 0 0 0}
         data={0 0 0 0 0}
         data={0 0 0 vsml1 0}
@@ -293,15 +304,20 @@ if sml[1]>0 {
 ; close server
 res=wsc()
 
+;>M 1   ; Note: %variables% do not work within >M section!!
+;1=meter1, 20=GPIO20, s=SML, 0=filterOff | 16=filterOn, 9600=baud, EasyM=Name 
+;+1,20,s,0,9600,EasyM,1
+;1. line = sml[1] (aktuelle Leistung W), 2. = sml[2] (Netzbezug kWh), 3. = sml[3] (Netzeinspeisung kWh)
+
 >M 2
 NO_USE_SML_CANBUS
 ; define main meter
-+1,16,s,0,9600,SML
++1,20,s,0,9600,EasyM,1
 1,=h Version: %Version%
 1,=h<hr/>
 1,77070100100700ff@1,Leistung,W,Power_curr,0
-1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
-1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
+1,77070100010800ff@1000,Verbrauch,kWh,Total_in,1
+1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,1
 1,=h<hr/>
 ; define additional sub-meters
 +2,3,M,0,9600,MOD,1,2,01030025,0103001E,02030025,0203001E,03030025,0303001E,04030025,0403001E,05030025,0503001E,06030025,0603001E,0704000C,07040048,0804000C,08040048
