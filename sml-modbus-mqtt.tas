@@ -12,12 +12,13 @@ Version="0.2.1"
 
 ; for testing without Smart Meter set minE to 0
 ;minE=0
-; for production set minE to 10000
+; for production set minE to 10000 (=10kWh) to avoid issues with
+; a) data from new meter not reported
+; b) invalid data reported
 minE=10000
 ; Beschreibung:
-
-; variables SML
-;pcurr=0
+; This script is intended to be used with a Smart Meter
+; and optionally with a Domoticz server.
 
 ; variables Modbus TCP
 res=0
@@ -66,7 +67,7 @@ prod=0
 =>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
-;disable publishing at MQTT teleperiod, on boot
+;disable publishing at MQTT teleperiod on boot
 ;Deaktiviere MQTT beim Start, verhindert das falsche Werte gesendet werden
 smlj=0
 
@@ -321,22 +322,23 @@ if sml[1]>0 {
 ; close server
 res=wsc()
 
->M 1   ; Note: %variables% do not work within >M section!!
-;1=meter1, 20=GPIO20, s=SML, 0=filterOff | 16=filterOn, 9600=baud, EasyM=Name 
-+1,17,s,0,9600,EasyM,1
-;1. line = sml[1] (aktuelle Leistung W), 2. = sml[2] (Netzbezug kWh), 3. = sml[3] (Netzeinspeisung kWh)
+>M 2   ; Note: %variables% do not work within >M section!!
+;1=meter1, 16=GPIO16, s=SML, 0=filterOff | 16=filterOn, 9600=baud, SML=Name 
+;1. line = sml[1] (aktuelle Leistung W), 
+;2. line = sml[2] (Netzbezug kWh), 
+;3. line = sml[3] (Netzeinspeisung kWh)
 
-;>M 2
-;NO_USE_SML_CANBUS
 ; define main meter
-+1,17,s,0,9600,EasyM,1
-1,=h Version: %Version%
++1,16,s,0,9600,SML,1
+;define Web interface (aka Main Menu)
 1,=h<hr/>
 1,77070100100700ff@1,Leistung,W,Power_curr,0
-1,77070100010800ff@1000,Verbrauch,kWh,Total_in,1
-1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,1
+1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
+1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
 1,=h<hr/>
 ; define additional sub-meters
++2,3,M,0,9600,MOD,1,2,01030025,0103001D,02030025,0203001D,03030025,0303001D,04030025,0403001D,05030025,0503001D,06030025,0603001D,0704000C,07040048,0804000C,08040048
+2,=h<hr/>
 +2,3,M,0,9600,MOD,1,2,01030025,0103001E,02030025,0203001E,03030025,0303001E,04030025,0403001E,05030025,0503001E,06030025,0603001E,0704000C,07040048,0804000C,08040048
 2,010304UUuu@i0:0.1,A Power,W,A_power,0
 2,010304UUuu@i1:100,A Energy,kWh,A_energy,2
@@ -361,4 +363,7 @@ res=wsc()
 2,=h<hr/>
 2,080404ffffffff@i14:1,H Power,W,H_power,1
 2,080404ffffffff@i15:1,H Energy,kWh,H_energy,3
+2,=h<hr/>
+2,=h Skript Version: %Version%
+2,=h<hr/>
 #
