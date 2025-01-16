@@ -15,9 +15,14 @@ Version="0.2.1"
 ; for production set minE to 10000 (=10kWh) to avoid issues with
 ; a) data from new meter not reported
 ; b) invalid data reported
+; for production set minE to 10000 (=10kWh) to avoid issues with
+; a) data from new meter not reported
+; b) invalid data reported
 minE=10000
 
 ; Beschreibung:
+; This script is intended to be used with a Smart Meter
+; and optionally with a Domoticz server.
 ; This script is intended to be used with a Smart Meter
 ; and optionally with a Domoticz server.
 
@@ -68,6 +73,7 @@ prod=0
 =>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
+;disable publishing at MQTT teleperiod on boot
 ;disable publishing at MQTT teleperiod on boot
 ;Deaktiviere MQTT beim Start, verhindert das falsche Werte gesendet werden
 smlj=0
@@ -323,6 +329,11 @@ if sml[1]>0 {
 ; close server
 res=wsc()
 
+>M 2   ; Note: %variables% do not work within >M section!!
+;1=meter1, 16=GPIO16, s=SML, 0=filterOff | 16=filterOn, 9600=baud, SML=Name 
+;1. line = sml[1] (aktuelle Leistung W), 
+;2. line = sml[2] (Netzbezug kWh), 
+;3. line = sml[3] (Netzeinspeisung kWh)
 >M 2   ; Note: %variables% do not work within >M section!!
 ;1=meter1, 16=GPIO16, s=SML, 0=filterOff | 16=filterOn, 9600=baud, SML=Name 
 ;1. line = sml[1] (aktuelle Leistung W), 
