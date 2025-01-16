@@ -1,16 +1,19 @@
 >D
+; Note: script requires Tasmota image compiled with USE_SCRIPT_TCP_SERVER due to using commands wswa & wsa !!
+
 ;config for VS Code extension "Tasmota Script Language Support"
 ;IP=192.168.0.250
 ;stripcomments
 ;scriptsize=18000
 
 ; Skript Version:
-Version="0.2.0"
+; ToDo: update version in modbus response from below variable %Version%
+Version="0.2.1"
 
 ; for testing without Smart Meter set minE to 0
-minE=0
-; for production set minE to 1000
-;minE=1000
+;minE=0
+; for production set minE to 10000
+minE=10000
 ; Beschreibung:
 
 ; variables SML
@@ -121,23 +124,32 @@ switch reg
 
     case 40044
         ; Sun specs: Start 40045
-		; string08: SW version   = "0.2.0"
+		; string08: SW version   = "0.2.1"
         ; . = 46
-		data={48 46 50 46 48    0 0 0}
+		data={48 46 50 46 49    0 0 0}
         ; Sun specs: Start 40053
 		; string16: Smart Meter Serial number = "12345" 
 		data={49 50 51 52 53   0 0 0 0 0   0 0 0 0 0   0}
-        data={240 213}
 
-    case 40069
+    case 40068
+        ; ToDO: original code used 40069 (identical with sunspec) but otherwise -1 offset! 
+        ; Suspected reason:  field "ID" was duplicated incorrectly
         ; Sun specs: Start 40069
-		; uint16: Modbus Device Address = 213  
-        data={213 124}
+		; uint16: Modbus Device Address = 240  
+        data={240}
+        ; Sun specs: Start 40070
+        ; uint16: ID, 213 = "WYE-Connect Three Phase"
+        data={213}
+        ; Sun specs: Start 40071
+        ; uint16: L, 124 = "Length of sunspec model ac_meter (21x)"
+        data={124}
         
     case 40071
         data={0 0 0 0 0}
         data={0 0 0 0 0}
-        data={0 0 0 vsml1 0}
+         ; Sun specs: Start 40098
+        ; float32: W, "Total Real Power"
+       data={0 0 0 vsml1 0}
         data={0 0 0 0 0}
         data={0 0 0 0 0}
         data={0 0 0 0 0}
@@ -145,6 +157,10 @@ switch reg
         nval=nval/2
 
     case 40129
+         ; Sun specs: Start 40130
+        ; float32: TotWhExp, "Total Real Energy Exported"
+         ; Sun specs: Start 40138
+        ; float32: TotWhImp, "Total Real Energy Imported"
         data={vsml3 0 0 0 vsml2}
         data={0 0 0 0 0}
         data={0 0 0 0 0}
@@ -195,14 +211,14 @@ if xcnt>=12 {
             resp[5]=0
             resp[6]=req[12]*2+3
             print ModBus: requested payload len: %resp[12]%
-            print ModBus: calc 6 len: %resp[6]%
+            print ModBus: calc len resp[6]: %resp[6]%
             ;device address
             resp[7]=req[7]
             ; function code
             resp[8]=req[8]
             ; payload len
             resp[9]=req[12]*2
-            print ModBus: calc payload len: %resp[9]%
+            print ModBus: calc payload len resp[9]: %resp[9]%
             ; write response header
             wswa(resp 9)
 
@@ -256,7 +272,8 @@ He=MOD#H_energy*1000
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
 if (usage>minE and ret>minE) {
-	print MQTT publishing enabled
+    ; ToDo:print only once every 5 Minutes
+	;print MQTT publishing enabled
     smlj|=1
 }
 
@@ -304,15 +321,15 @@ if sml[1]>0 {
 ; close server
 res=wsc()
 
-;>M 1   ; Note: %variables% do not work within >M section!!
+>M 1   ; Note: %variables% do not work within >M section!!
 ;1=meter1, 20=GPIO20, s=SML, 0=filterOff | 16=filterOn, 9600=baud, EasyM=Name 
-;+1,20,s,0,9600,EasyM,1
++1,17,s,0,9600,EasyM,1
 ;1. line = sml[1] (aktuelle Leistung W), 2. = sml[2] (Netzbezug kWh), 3. = sml[3] (Netzeinspeisung kWh)
 
->M 2
-NO_USE_SML_CANBUS
+;>M 2
+;NO_USE_SML_CANBUS
 ; define main meter
-+1,20,s,0,9600,EasyM,1
++1,17,s,0,9600,EasyM,1
 1,=h Version: %Version%
 1,=h<hr/>
 1,77070100100700ff@1,Leistung,W,Power_curr,0
