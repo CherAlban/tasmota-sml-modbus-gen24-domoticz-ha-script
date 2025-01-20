@@ -1,6 +1,6 @@
 # tasmota-sml-modbus-gen24-domoticz-ha-script
 
-Das Script emuliert ein Fronius Smart Meter TCP, indem es per SML den Stromzähler des Netzbetreibers ausliest und die drei von meinem Stromzähler auslesbaren Messwerte: aktuelle Leistung, total_WH_exp und total_Wh_Imp per Modbus TCP nach SunSpec Standard zur Verfügung stellt.
+Das Script emuliert ein Fronius Smart Meter TCP, indem es per SML den Stromzähler des Netzbetreibers ausliest und die drei von meinem Stromzähler (ISKRA MT631) auslesbaren Messwerte: aktuelle Leistung, total_WH_exp und total_Wh_Imp per Modbus TCP nach SunSpec Standard zur Verfügung stellt.
 
 ![pasted-from-clipboard](https://github.com/user-attachments/assets/5423f0b8-385f-4604-bcb6-16871295c6d1)
 
