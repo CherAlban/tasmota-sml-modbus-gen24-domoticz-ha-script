@@ -8,7 +8,7 @@ Das ganze funktioniert mit angepassten Tasmota Images ab V13.3.0 (inkl. der Opti
 
 
 Die Fronius MODBUS Register Referenz gibt es direkt bei Fronius zum Downlaod: http://www.fronius.com/QR-link/0024
-In dem .zip gibt es " Smart_Meter_Register_Map_Float.xlsx", darin sind alle Register beschrieben.
+In dem .zip gibt es "Smart_Meter_Register_Map_Float.xlsx", darin sind alle Register beschrieben.
 
 Die Reihenfolge und Gruppierung der Registerabfragen habe ich nur für den Fronius Gen24 ermittelt und im Script emuliert, für andere Wechselrichter die auch den SunSpec Standard nutzen muss man das wahrscheinlich anpassen.
 
