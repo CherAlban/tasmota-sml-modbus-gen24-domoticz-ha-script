@@ -21,5 +21,5 @@ Zusätzlich fragt das Script per seriellem Modbus acht 1-Phasen Wechselstromzäh
 Die serielle Abfrage der Saia ALD1D5F ist hier beschrieben:
 https://www.photovoltaikforum.com/thread/199292-sonoff-shelly-bessere-alternativen-f%C3%BCr-tasmota/?postID=3594224#post3594224
 
+![image](https://github.com/user-attachments/assets/2929b252-0a70-4c63-9da4-44cbdb79cd03)
 
-![image](https://github.com/user-attachments/assets/b25b3cf9-0b36-4861-a245-1132eacefd40)
