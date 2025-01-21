@@ -59,7 +59,7 @@ smlj=0
 spinm(2 1)
 
 ; start TCP server
-if entel=1 {
+if entel==1 {
     res=wso(502)
     print start TCP server - return code: %res%
 }
@@ -209,37 +209,37 @@ He=MOD#H_energy*1000
 
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
-if (usage>1000 and ret>1000 and entel=1) {
+if (usage>1000 and ret>1000 and entel==1) {
 	smlj|=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
-  if (usage>1000 and ret>1000 and entel=1) {
+  if (usage>1000 and ret>1000 and entel==1) {
   	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
-  if (Ae>1000 and and entel=1) {
+  if (Ae>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
-  if (Be>1000 and and entel=1) {
+  if (Be>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
-  if (Ce>1000 and and entel=1) {
+  if (Ce>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
-  if (De>1000 and and entel=1) {
+  if (De>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
-  if (Ee>1000 and and entel=1) {
+  if (Ee>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
-  if (Fe>1000 and and entel=1) {
+  if (Fe>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
-  if (Ge>1000 and and entel=1) {
+  if (Ge>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
-  if (He>1000 and and entel=1) {
+  if (He>1000 and and entel==1) {
   	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
