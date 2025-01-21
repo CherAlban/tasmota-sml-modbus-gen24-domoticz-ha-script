@@ -1,4 +1,7 @@
 >D
+; enable sending telemetry data
+entel=1
+
 ; variables SML
 pcurr=0
 
@@ -45,6 +48,7 @@ cons=0
 prod=0
 
 >B
+=>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
 ;disable publishing at MQTT teleperiod on boot
@@ -55,15 +59,18 @@ smlj=0
 spinm(2 1)
 
 ; start TCP server
-res=wso(502)
-print res=%res%
-; create task 1 every 10ms on core1, priority 3, stack 8kb
-ct(1 10 1 3 8000)
+if entel=1 {
+    res=wso(502)
+    print start TCP server - return code: %res%
+}
+
+; create task 1 every 50ms on core1, priority 3, stack 8kb
+ct(1 50 1 3 8000)
 
 ; set Modbus register values
 #dosel
 data[0]=0
-; default = word
+; default data type = word
 dform=1
 switch reg
 
@@ -129,14 +136,13 @@ ends
 xcnt =wsa()
 ;print %xcnt%
 if xcnt>=12 {    
-    ; check if sml reading are valid (>100kWh), else discard request
+    ; check if sml readings are valid (>100kWh), else discard request
     if (vsml2>100000 and vsml3>100000 and xcnt<=120) {
-;        for cnt 1 xcnt 12
-            res=wsra(req)
 
+            res=wsra(req)
             reg=(req[9]<<8)|req[10]
             nval=req[12]
-;            print register %reg%, count %nval%
+;            print register: %reg%, count: %nval%
 
             ; transaction id
             resp[1]=req[1]
@@ -160,13 +166,13 @@ if xcnt>=12 {
             ; write response data
             =#dosel
             wswa(data nval dform)
- ;       next
+ 
     } else {
         ecnt=ecnt+1
 	print clear TCP buffer %xcnt% ecnt %ecnt%
         wsf()
     }
-;    print time %(millis-ctime)%
+;    print time: %(millis-ctime)%
 }
 
 >F
@@ -203,37 +209,37 @@ He=MOD#H_energy*1000
 
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
-if (usage>1000 and ret>1000) {
+if (usage>1000 and ret>1000 and entel=1) {
 	smlj|=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
-  if (usage>1000 and ret>1000) {
+  if (usage>1000 and ret>1000 and entel=1) {
   	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
-  if Ae>1000 {
+  if (Ae>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
-  if Be>1000 {
+  if (Be>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
-  if Ce>1000 {
+  if (Ce>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
-  if De>1000 {
+  if (De>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
-  if Ee>1000 {
+  if (Ee>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
-  if Fe>1000 {
+  if (Fe>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
-  if Ge>1000 {
+  if (Ge>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
-  if He>1000 {
+  if (He>1000 and and entel=1) {
   	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
@@ -242,14 +248,12 @@ if upsecs%tper==0 {
 pcurr=sml[1]
 if pcurr>0 {
     spin(2 0)
-}
-if pcurr<=0 {
+} else {
     spin(2 1)
 }
 
-
 >R
-; close server
+; close TCP server
 res=wsc()
 
 >M 2
