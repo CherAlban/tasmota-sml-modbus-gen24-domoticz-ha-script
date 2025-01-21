@@ -2,6 +2,9 @@
 ; enable sending telemetry data
 entel=1
 
+; minimum energy in Wh to discard empty readings
+minE=10000
+
 ; variables SML
 pcurr=0
 
@@ -136,8 +139,8 @@ ends
 xcnt =wsa()
 ;print %xcnt%
 if xcnt>=12 {    
-    ; check if sml readings are valid (>100kWh), else discard request
-    if (vsml2>100000 and vsml3>100000 and xcnt<=120) {
+    ; check if sml readings are valid (>minE), else discard request
+    if (vsml2>minE and vsml3>minE and xcnt<=120) {
 
             res=wsra(req)
             reg=(req[9]<<8)|req[10]
@@ -209,37 +212,37 @@ He=MOD#H_energy*1000
 
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
-if (usage>1000 and ret>1000 and entel==1) {
+if (usage>minE and ret>minE and entel==1) {
 	smlj|=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
-  if (usage>1000 and ret>1000 and entel==1) {
+  if (usage>minE and ret>minE and entel==1) {
   	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
-  if (Ae>1000 and and entel==1) {
+  if (Ae>minE and and entel==1) {
   	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
-  if (Be>1000 and and entel==1) {
+  if (Be>minE and and entel==1) {
   	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
-  if (Ce>1000 and and entel==1) {
+  if (Ce>minE and and entel==1) {
   	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
-  if (De>1000 and and entel==1) {
+  if (De>minE and and entel==1) {
   	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
-  if (Ee>1000 and and entel==1) {
+  if (Ee>minE and and entel==1) {
   	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
-  if (Fe>1000 and and entel==1) {
+  if (Fe>minE and and entel==1) {
   	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
-  if (Ge>1000 and and entel==1) {
+  if (Ge>minE and and entel==1) {
   	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
-  if (He>1000 and and entel==1) {
+  if (He>minE and and entel==1) {
   	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
