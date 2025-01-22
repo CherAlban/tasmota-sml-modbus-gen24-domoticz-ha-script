@@ -54,7 +54,7 @@ prod=0
 =>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
-;disable publishing at MQTT teleperiod on boot
+;on boot disable publishing MQTT at teleperiod interval
 smlj=0
 
 >BS
@@ -129,7 +129,7 @@ switch reg
 
 ;current power in W 40097 sml[1]
 ;total Wh exp 40129 sml[3]
-;total Wh Imp 40137 sml[2]
+;total Wh imp 40137 sml[2]
 
 ends
 
@@ -145,7 +145,7 @@ if xcnt>=12 {
             res=wsra(req)
             reg=(req[9]<<8)|req[10]
             nval=req[12]
-;            print register: %reg%, count: %nval%
+;            print read register: %reg%, count: %nval%
 
             ; transaction id
             resp[1]=req[1]
@@ -172,7 +172,7 @@ if xcnt>=12 {
  
     } else {
         ecnt=ecnt+1
-	print clear TCP buffer %xcnt% ecnt %ecnt%
+	print clear TCP buffer xcnt: %xcnt% ecnt: %ecnt%
         wsf()
     }
 ;    print time: %(millis-ctime)%
@@ -212,7 +212,7 @@ He=MOD#H_energy*1000
 
 >S
 ;re-enable publishing at MQTT teleperiod if data is valid
-if (usage>minE and ret>minE and entel==1) {
+if (smlj==0 and usage>minE and ret>minE and entel==1) {
 	smlj|=1
 }
 
