@@ -67,8 +67,10 @@ if entel==1 {
     print start TCP server - return code: %res%
 }
 
-; create task 1 every 50ms on core1, priority 3, stack 8kb
-ct(1 50 1 3 8000)
+; create task 1 every 50ms on core0, priority 3, stack 8kb
+; select core0 (usually fastest core), because on asymetric CPUs like C6 using low power cores can lead to 
+; all kind of issues like: stack protection error, timeout error,..
+ct(1 50 0 3 8196)
 
 ; set Modbus register values
 #dosel
