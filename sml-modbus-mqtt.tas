@@ -2,6 +2,9 @@
 ; enable sending telemetry data
 entel=1
 
+; MODBUS task and TCP server running
+runMB=0;
+
 ; minimum energy in Wh to discard empty readings
 minE=10000
 
@@ -60,15 +63,6 @@ smlj=0
 >BS
 ; init LED
 spinm(2 1)
-
-; start TCP server
-if entel==1 {
-    res=wso(502)
-    print start TCP server - return code: %res%
-}
-
-; create task 1 every 50ms on core1, priority 3, stack 8kb
-ct(1 50 1 3 8000)
 
 ; set Modbus register values
 #dosel
@@ -211,6 +205,15 @@ Hp=MOD#H_power
 He=MOD#H_energy*1000
 
 >S
+; start TCP server and MODBUS task t1 after wifi is connected
+if (entel==1 and wifis>0 and runMB==0) {
+    res=wso(502)
+    print start TCP server - return code: %res%
+    ; create task 1 every 50ms on core1, priority 3, stack 8kb
+    ct(1 50 1 3 8192)
+    runMB=1
+}
+
 ;re-enable publishing at MQTT teleperiod if data is valid
 if (smlj==0 and usage>minE and ret>minE and entel==1) {
 	smlj|=1
