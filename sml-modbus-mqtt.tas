@@ -121,9 +121,9 @@ switch reg
     case 50000
         data={0 0}
 
-;current power in W 40097 sml[1]
-;total Wh exp 40129 sml[3]
-;total Wh imp 40137 sml[2]
+; current power in W 40097 sml[1]
+; total Wh exp 40129 sml[3]
+; total Wh imp 40137 sml[2]
 
 ends
 
@@ -150,7 +150,7 @@ if xcnt>=12 {
             ; length
             resp[5]=0
             resp[6]=req[12]*2+3
-            ;device address
+            ; device address
             resp[7]=req[7]
             ; function code
             resp[8]=req[8]
