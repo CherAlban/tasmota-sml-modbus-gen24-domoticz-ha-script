@@ -2,10 +2,10 @@
 ; enable sending telemetry data
 entel=1
 
-; MODBUS task and TCP server running
+; Modbus task and TCP server running
 runMB=0;
 
-; minimum energy in Wh to discard empty readings
+; minimum energy threshold in Wh to discard empty readings
 minE=10000
 
 ; variables SML
@@ -57,14 +57,14 @@ prod=0
 =>otaurl !!NEVER UPGRADE VIA WEB SERVER!!
 =>sensor53 r
 
-;on boot disable publishing MQTT at teleperiod interval
+; on boot disable publishing MQTT at teleperiod interval
 smlj=0
 
 >BS
 ; init LED
 spinm(2 1)
 
-; set Modbus register values
+; set Modbus TCP register values
 #dosel
 data[0]=0
 ; default data type = word
@@ -133,7 +133,7 @@ ends
 xcnt =wsa()
 ;print %xcnt%
 if xcnt>=12 {    
-    ; check if sml readings are valid (>minE), else discard request
+    ; check if SML readings are valid (>minE), else discard request
     if (vsml2>minE and vsml3>minE and xcnt<=120) {
 
             res=wsra(req)
@@ -169,7 +169,7 @@ if xcnt>=12 {
 	print clear TCP buffer xcnt: %xcnt% ecnt: %ecnt%
         wsf()
     }
-;    print time: %(millis-ctime)%
+; print time: %(millis-ctime)%
 }
 
 >F
@@ -205,7 +205,7 @@ Hp=MOD#H_power
 He=MOD#H_energy*1000
 
 >S
-; start TCP server and MODBUS task t1 after wifi is connected
+; start TCP server and Modbus task t1 after wifi is connected
 if (entel==1 and wifis>0 and runMB==0) {
     res=wso(502)
     print start TCP server - return code: %res%
@@ -214,7 +214,7 @@ if (entel==1 and wifis>0 and runMB==0) {
     runMB=1
 }
 
-;re-enable publishing at MQTT teleperiod if data is valid
+; re-enable publishing at MQTT teleperiod if data is valid (>minE)
 if (smlj==0 and usage>minE and ret>minE and entel==1) {
 	smlj|=1
 }
@@ -250,7 +250,7 @@ if upsecs%tper==0 {
   }
 }
 
-; onbaord LED on if Power_curr < 0
+; onboard LED on if Power_curr < 0
 pcurr=sml[1]
 if pcurr>0 {
     spin(2 0)
