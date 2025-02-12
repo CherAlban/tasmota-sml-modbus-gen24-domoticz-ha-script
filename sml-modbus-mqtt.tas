@@ -205,8 +205,9 @@ Hp=MOD#H_power
 He=MOD#H_energy*1000
 
 >S
-; start TCP server and Modbus task t1 after wifi is connected
-if (enTel==1 and wifis>0 and runMB==0) {
+; start TCP server and Modbus task t1 after ethernet is connected
+; (use wifis>0 for checking if WiFi is connected) 
+if (enTel==1 and ethdwn==0 and runMB==0) {
     res=wso(502)
     print start TCP server - return code: %res%
     ; create task 1 every 50ms on core1, priority 3, stack 8kb
