@@ -1,6 +1,6 @@
 >D
 ; enable sending telemetry data
-entel=1
+enTel=1
 
 ; Modbus task and TCP server running
 runMB=0;
@@ -206,7 +206,7 @@ He=MOD#H_energy*1000
 
 >S
 ; start TCP server and Modbus task t1 after wifi is connected
-if (entel==1 and wifis>0 and runMB==0) {
+if (enTel==1 and wifis>0 and runMB==0) {
     res=wso(502)
     print start TCP server - return code: %res%
     ; create task 1 every 50ms on core1, priority 3, stack 8kb
@@ -215,37 +215,37 @@ if (entel==1 and wifis>0 and runMB==0) {
 }
 
 ; re-enable publishing at MQTT teleperiod if data is valid (>minE)
-if (smlj==0 and usage>minE and ret>minE and entel==1) {
-	smlj|=1
+if (smlj==0 and usage>minE and ret>minE and enTel==1) {
+	smlj=1
 }
 
 ; update Domoticz MQTT
 if upsecs%tper==0 {
-  if (usage>minE and ret>minE and entel==1) {
+  if (usage>minE and ret>minE and enTel==1) {
   	=>publish domoticz/in {"idx":2162,"svalue":"%usage%;0;%ret%;0;%cons%;%prod%"}
   }
-  if (Ae>minE and entel==1) {
+  if (Ae>minE and enTel==1) {
   	=>publish domoticz/in {"idx":770,"svalue":"%Ap%;%Ae%"}
   }
-  if (Be>minE and entel==1) {
+  if (Be>minE and enTel==1) {
   	=>publish domoticz/in {"idx":771,"svalue":"%Bp%;%Be%"}
   }
-  if (Ce>minE and entel==1) {
+  if (Ce>minE and enTel==1) {
   	=>publish domoticz/in {"idx":772,"svalue":"%Cp%;%Ce%"}
   }
-  if (De>minE and entel==1) {
+  if (De>minE and enTel==1) {
   	=>publish domoticz/in {"idx":2156,"svalue":"%Dp%;%De%"}
   }
-  if (Ee>minE and entel==1) {
+  if (Ee>minE and enTel==1) {
   	=>publish domoticz/in {"idx":725,"svalue":"%Ep%;%Ee%"}
   }
-  if (Fe>minE and entel==1) {
+  if (Fe>minE and enTel==1) {
   	=>publish domoticz/in {"idx":2157,"svalue":"%Fp%;%Fe%"}
   }
-  if (Ge>minE and entel==1) {
+  if (Ge>minE and enTel==1) {
   	=>publish domoticz/in {"idx":2158,"svalue":"%Gp%;%Ge%"}
   }
-  if (He>minE and entel==1) {
+  if (He>minE and enTel==1) {
   	=>publish domoticz/in {"idx":2153,"svalue":"%Hp%;%He%"}
   }
 }
