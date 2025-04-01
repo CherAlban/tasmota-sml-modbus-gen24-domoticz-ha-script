@@ -12,7 +12,7 @@ In dem .zip gibt es "Smart_Meter_Register_Map_Float.xlsx", darin sind alle Regis
 
 Die Reihenfolge und Gruppierung der Registerabfragen habe ich nur für den Fronius Gen24 ermittelt und im Script emuliert, für andere Wechselrichter die auch den SunSpec Standard nutzen muss man das wahrscheinlich anpassen.
 
-Getestet habe ich mit einem Wechselrichter Fronius Gen24 ab Firmware 1.28.7-1 (aktuell 1.35.4-1)
+Getestet habe ich mit einem Wechselrichter Fronius Gen24 ab Firmware 1.28.7-1 (aktuell 1.35.8-1)
 
 Alle Credits gehen an gemu2015, er hat Tasmota entsprechend erweitert und mir sehr viel mit dem Script geholfen.
 
