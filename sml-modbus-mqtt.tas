@@ -265,7 +265,7 @@ res=wsc()
 
 >M 2
 +1,16,s,0,9600,SML
-1,77070100100700ff@1,Leistung,W,Power_curr,0
+1,77070100100700ff@1,Leistung,W,Power_curr,16
 1,77070100010800ff@1000,Verbrauch,kWh,Total_in,3
 1,77070100020800ff@1000,Netzeinspeisung,kWh,Total_out,3
 1,=h<hr/>
