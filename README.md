@@ -4,7 +4,7 @@ Das Script emuliert ein Fronius Smart Meter TCP, indem es per SML den Stromzähl
 
 ![pasted-from-clipboard](https://github.com/user-attachments/assets/5423f0b8-385f-4604-bcb6-16871295c6d1)
 
-Das ganze funktioniert mit angepassten Tasmota Images ab V13.3.0 (inkl. der Optionen USE_TCP_Server und USE_SCRIPT_TASK), wie sie der User Ottello freundlicherweise stets aktuell auf seinem Blog zur Verfügung stellt: https://ottelo.jimdofree.com/s…slesen-tasmota/#Downloads
+Das ganze funktioniert mit angepassten Tasmota Images ab V13.3.0 (inkl. der Optionen USE_TCP_Server und USE_SCRIPT_TASK), wie sie der User Ottelo freundlicherweise stets aktuell auf seinem Blog zur Verfügung stellt: https://ottelo.jimdofree.com/s…slesen-tasmota/#Downloads und https://github.com/ottelo9/tasmota-sml-images
 
 
 Die Fronius MODBUS Register Referenz gibt es direkt bei Fronius zum Downlaod: http://www.fronius.com/QR-link/0024
