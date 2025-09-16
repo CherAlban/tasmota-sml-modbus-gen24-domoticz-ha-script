@@ -4,6 +4,8 @@ Das Script emuliert ein Fronius Smart Meter TCP, indem es per SML den Stromzähl
 
 ![pasted-from-clipboard](https://github.com/user-attachments/assets/5423f0b8-385f-4604-bcb6-16871295c6d1)
 
+Die aktuelle Leistung wird mit der Updaterate des Stromzählers (beim MT631 1/s) weitergegeben, die Verbrauchswerte mit der eingestellten Tasmota "Telemetry period" (bei mir 1/min).
+
 Das ganze funktioniert mit angepassten Tasmota Images ab V13.3.0 (inkl. der Optionen USE_TCP_Server und USE_SCRIPT_TASK), wie sie der User Ottelo freundlicherweise stets aktuell auf seinem Blog zur Verfügung stellt: https://ottelo.jimdofree.com/s…slesen-tasmota/#Downloads und https://github.com/ottelo9/tasmota-sml-images
 
 
@@ -12,7 +14,7 @@ In dem .zip gibt es "Smart_Meter_Register_Map_Float.xlsx", darin sind alle Regis
 
 Die Reihenfolge und Gruppierung der Registerabfragen habe ich nur für den Fronius Gen24 ermittelt und im Script emuliert, für andere Wechselrichter die auch den SunSpec Standard nutzen muss man das wahrscheinlich anpassen.
 
-Getestet habe ich mit einem Wechselrichter Fronius Gen24 ab Firmware 1.28.7-1 (aktuell 1.37.6-1)
+Getestet habe ich mit einem Wechselrichter Fronius Gen24 ab Firmware 1.28.7-1 (aktuell 1.38.6-1)
 
 Alle Credits gehen an gemu2015, er hat Tasmota entsprechend erweitert und mir sehr viel mit dem Script geholfen.
 
